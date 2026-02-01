@@ -1,8 +1,8 @@
 import tkinter as tk
 import random
 
-ROWS = 10
-COLS = 10
+ROWS = 15
+COLS = 15
 CELL_SIZE = 30
 
 WIDTH = COLS * CELL_SIZE
@@ -28,9 +28,9 @@ def draw_cell(r, c ):
     y2 = y1 + CELL_SIZE
 
     if board[r][c] == 1:
-        color = "black"
-    else:
         color = "white"
+    else:
+        color = "black"
     canvas.create_rectangle(x1, y1, x2, y2,
                             fill=color, outline="gray")
     
@@ -72,6 +72,21 @@ clear_button.grid(row=0, column=0, padx=5)
 
 random_button = tk.Button(button_frame, text="Random", command=random_board)
 random_button.grid(row=0, column=1, padx=5)
+
+def count_neighbors(r, c):
+    count = 0
+
+    for dr in (-1, 0, 1):
+        for dc in (-1, 0, 1):
+            if dr == 0 and dc == 0:
+                continue
+            nr = r + dr
+            nc = c + dc
+            if 0<=nr<ROWS and 0<=nc<COLS:
+                if board[nr][nc] == 1:
+                    count += 1
+    return count
+
 
 draw_board()    
 root.mainloop()
