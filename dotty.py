@@ -28,9 +28,9 @@ def draw_cell(r, c ):
     y2 = y1 + CELL_SIZE
 
     if board[r][c] == 1:
-        color = "white"
-    else:
         color = "black"
+    else:
+        color = "white"
     canvas.create_rectangle(x1, y1, x2, y2,
                             fill=color, outline="gray")
     
@@ -73,7 +73,7 @@ clear_button.grid(row=0, column=0, padx=5)
 random_button = tk.Button(button_frame, text="Random", command=random_board)
 random_button.grid(row=0, column=1, padx=5)
 
-def count_neighbors(r, c):
+def count_neighbours(r, c):
     count = 0
 
     for dr in (-1, 0, 1):
@@ -86,6 +86,39 @@ def count_neighbors(r, c):
                 if board[nr][nc] == 1:
                     count += 1
     return count
+
+def make_empty_board():
+    new_board = []
+    for r in range(ROWS):
+        row = []
+        for c in range(COLS):
+            row.append(0)
+        new_board.append(row)
+    return new_board
+
+def step():
+    global board
+    new_board = make_empty_board()
+    for r in range(ROWS):
+        for c in range(COLS):
+            n = count_neighbours(r, c)
+        if board[r][c] == 1:
+            if n == 2 or n == 3:
+                new_board[r][c] = 1
+        else:
+            if n == 3:
+                new_board[r][c] = 1
+            else:
+                new_board [r][c] = 0
+
+    board = new_board
+    draw_board()
+
+step_btn = tk.Button(button_frame, text="step", command=step)
+step_btn.grid(row=0, column=2, padx=5)
+
+
+
 
 
 draw_board()    
