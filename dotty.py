@@ -1,9 +1,11 @@
 import tkinter as tk
 import random
 
-ROWS = 15
-COLS = 15
-CELL_SIZE = 30
+ROWS = 30
+COLS = 30
+CELL_SIZE = 20
+
+running = False
 
 WIDTH = COLS * CELL_SIZE
 HEIGHT = ROWS * CELL_SIZE 
@@ -31,8 +33,7 @@ def draw_cell(r, c ):
         color = "black"
     else:
         color = "white"
-    canvas.create_rectangle(x1, y1, x2, y2,
-                            fill=color, outline="gray")
+    canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="gray")
     
 def draw_board():
     canvas.delete("all")
@@ -41,7 +42,7 @@ def draw_board():
             draw_cell(r, c)
 
 def toogle_cell(event):
-    c = event.x// CELL_SIZE
+    c = event.x // CELL_SIZE
     r = event.y // CELL_SIZE
 
     if 0 <= r < ROWS and 0 <= c < COLS:
@@ -50,6 +51,7 @@ def toogle_cell(event):
         else:
             board[r][c] = 0
         draw_board()
+
 canvas.bind("<Button-1>", toogle_cell)
 
 button_frame = tk.Frame(root)
@@ -72,6 +74,8 @@ clear_button.grid(row=0, column=0, padx=5)
 
 random_button = tk.Button(button_frame, text="Random", command=random_board)
 random_button.grid(row=0, column=1, padx=5)
+
+
 
 def count_neighbours(r, c):
     count = 0
@@ -102,23 +106,45 @@ def step():
     for r in range(ROWS):
         for c in range(COLS):
             n = count_neighbours(r, c)
-        if board[r][c] == 1:
-            if n == 2 or n == 3:
-                new_board[r][c] = 1
-        else:
-            if n == 3:
-                new_board[r][c] = 1
+            if board[r][c] == 1:
+                if n == 2 or n == 3:
+                    new_board[r][c] = 1
             else:
-                new_board [r][c] = 0
+                if n == 3:
+                    new_board[r][c] = 1
+                else:
+                    new_board [r][c] = 0
 
     board = new_board
     draw_board()
 
+def stop():
+    global running
+    running = False
+
+def run_loop():
+    if not running:
+        return
+    step()
+    root.after(50, run_loop)
+
+def run():
+    global running
+    if not running:
+        running = True
+    run_loop()
+
+run_btn = tk.Button(button_frame, text="run", command=run)
+run_btn.grid(row=1, column=1, padx=5, pady=5)
+
+stop_btn = tk.Button(button_frame, text="stop", command=stop)
+stop_btn.grid(row=1, column=2, padx=5, pady=5)
+    
+
+
+
 step_btn = tk.Button(button_frame, text="step", command=step)
 step_btn.grid(row=0, column=2, padx=5)
-
-
-
 
 
 draw_board()    
